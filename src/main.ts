@@ -80,6 +80,7 @@ export default class YamlComments extends Plugin {
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].trim().startsWith(key)) {
         lines[i] = comment + lines[i]
+        break
       }
     }
     return lines.join('\n')
