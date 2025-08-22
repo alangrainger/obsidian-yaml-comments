@@ -1,6 +1,6 @@
 {
 	"name": "yaml-comments",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Keep YAML comments when updating frontmatter",
 	"main": "main.js",
 	"scripts": {

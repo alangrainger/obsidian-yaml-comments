@@ -24,7 +24,7 @@ export default class YamlComments extends Plugin {
 
       // Inject the comments back into the new frontmatter YAML
       const newYamlWithComments = this.processComments(originalYaml, newYaml)
-      const newContent = newYamlWithComments + bodyContent
+      const newContent = '---\n' + newYamlWithComments + '\n---\n' + bodyContent
 
       // Save the file back into the vault
       await this.app.vault.modify(file, newContent)
@@ -40,28 +40,45 @@ export default class YamlComments extends Plugin {
 
   async getYamlAndBody (file: TFile) {
     const originalContent = await this.app.vault.read(file)
-    const frontmatterMatch = originalContent.match(/^(---\n.*?\n---\r?\n)/s)
+    const frontmatterMatch = originalContent.match(/^---\n(.*?)\n---\r?\n/s)
     const yaml = frontmatterMatch?.[1] || ''
-    const body = originalContent.replace(yaml, '')
+    const body = originalContent.replace(/^---\n.*?\n---\r?\n/s, '')
 
     return [yaml, body]
   }
 
   processComments (originalYaml: string, newYaml: string) {
-    const fullMatches = originalYaml.matchAll(/((?:^\s*#.*(?:\r?\n|$))+)\s*(^\s*[^#\n]+)/mg)
-    for (const match of fullMatches) {
-      if (match.length < 3) continue
-      const comment = match[1]
-      const lineFollowingComment = match[2].trim()
-      newYaml = this.injectCommentInCorrectPlace(comment, lineFollowingComment, newYaml)
+    let comment = ''
+
+    // Loop through each line of the original YAML
+    for (let line of originalYaml.split('\n')) {
+      if (line.trim().startsWith('#')) {
+        // This is a comment line. Store the comment
+        comment += line + '\n'
+      } else {
+        // This is the non-comment line following the comment.
+        // We now inject the comment back into this place
+        // in the new YAML.
+
+        // Get the key name
+        const key = line.trim().match(/^(.+?(:|$))/)?.[1]
+        if (key) {
+          newYaml = this.injectCommentInCorrectPlace(comment, key, newYaml)
+        }
+        comment = ''
+      }
     }
+
+    // Any remaining comment goes at the end
+    if (comment) newYaml += '\n' + comment.trimEnd()
+
     return newYaml
   }
 
   injectCommentInCorrectPlace (comment: string, key: string, yaml: string) {
     const lines = yaml.split('\n')
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].trim() === key) {
+      if (lines[i].trim().startsWith(key)) {
         lines[i] = comment + lines[i]
       }
     }
