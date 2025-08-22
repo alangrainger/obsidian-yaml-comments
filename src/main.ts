@@ -18,11 +18,7 @@ export default class YamlComments extends Plugin {
       const [originalYaml, bodyContent] = await this.getYamlAndBody(file)
 
       // Call the original function to update the frontmatter
-      await this.originalProcessFrontMatter.call(
-        this.app.fileManager,
-        file,
-        fn
-      )
+      await this.originalProcessFrontMatter.call(this.app.fileManager, file, fn)
 
       // Get the updated frontmatter (which has had the comments stripped)
       const [newYaml, _] = await this.getYamlAndBody(file)
