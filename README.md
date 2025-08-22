@@ -18,11 +18,11 @@ e.g.:
 ```yaml
 ---
 some_prop: Some value
-# this comment will be kept
+# This comment will be kept ✅
 foo: bar
 some_list:
-  - item 1 # this comment won't be kept
-  # But this comment will be kept
+  - item 1 # this comment won't be kept ❌
+  # But this comment will be kept ✅
   - item 2
 tada: Hooray!
 ---
