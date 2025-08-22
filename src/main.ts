@@ -13,11 +13,10 @@ export default class YamlComments extends Plugin {
 
     // Replace it with our new custom function that does the same thing but also keeps the YAML comments
     this.app.fileManager.processFrontMatter = async (file, fn) => {
-      console.log('Processing YAML')
-
+      // Get the original YAML
       const [originalYaml, bodyContent] = await this.getYamlAndBody(file)
 
-      // Call the original function to update the frontmatter
+      // Call Obsidian's built-in function to update the frontmatter correctly
       await this.originalProcessFrontMatter.call(this.app.fileManager, file, fn)
 
       // Get the updated frontmatter (which has had the comments stripped)
