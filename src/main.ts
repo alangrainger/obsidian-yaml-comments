@@ -11,8 +11,7 @@ export default class YamlComments extends Plugin {
     // Store the original processMatterFunction reference
     this.originalProcessFrontMatter = this.app.fileManager.processFrontMatter
 
-    // Replace it with our new custom function that does the same thing
-    // but also keeps the YAML comments
+    // Replace it with our new custom function that does the same thing but also keeps the YAML comments
     this.app.fileManager.processFrontMatter = async (file, fn) => {
       console.log('Processing YAML')
 
@@ -28,8 +27,11 @@ export default class YamlComments extends Plugin {
       // Get the updated frontmatter (which has had the comments stripped)
       const [newYaml, _] = await this.getYamlAndBody(file)
 
+      // Inject the comments back into the new frontmatter YAML
       const newYamlWithComments = this.processComments(originalYaml, newYaml)
       const newContent = newYamlWithComments + bodyContent
+
+      // Save the file back into the vault
       await this.app.vault.modify(file, newContent)
     }
   }
