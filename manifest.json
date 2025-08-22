@@ -1,0 +1,11 @@
+{
+	"id": "yaml-comments",
+	"name": "yaml-comments",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Keep YAML comments when updating frontmatter",
+	"author": "Alan Grainger",
+	"authorUrl": "https://obsidian.md",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}
